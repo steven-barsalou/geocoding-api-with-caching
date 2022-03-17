@@ -1,6 +1,6 @@
 #use google maps api to get address gps coordinates if they are not in the cache
 
-from msilib.schema import Component
+#from msilib.schema import Component
 import googlemaps #for gmaps api
 import json
 
@@ -21,7 +21,7 @@ def gmaps_geocode(address_to_geocode):
     #format the response output
     output_string = json.dumps(geocode_result, indent=4)    
 
-    print(output_string)
+    #print(output_string)
 
     #write response to a file    
     with open('./maps_output.txt', 'w') as gmaps_out:
@@ -36,15 +36,26 @@ def extract_gps_coords(input_file):
         gmaps_response = json.loads(gmaps_out.read())    
 
     #parse lat and lon from response data
-    latitude = float(gmaps_response[0]['geometry']['location']['lat'])
-    longitude = float(gmaps_response[0]['geometry']['location']['lng'])
+    address = gmaps_response[0]['formatted_address']
+    latitude = gmaps_response[0]['geometry']['location']['lat']
+    longitude = gmaps_response[0]['geometry']['location']['lng']
 
+    '''
+    print('address = {}'.format(address))
     print('latitude = {}'.format(latitude))
     print('longitude = {}'.format(longitude))
+    '''
+
+    #create json response string
+    response = {'address': address, 'latitude': latitude, 'longitude': longitude}
+
+    print(response)
 
     #return extracted values as a tuple
-    return (latitude, longitude)
+    return response #(address, latitude, longitude)
 
+
+#---------------program starts here---------------#
 
 #call fuction to geocode the test address and output the response
 gmaps_geocode(test_address)
